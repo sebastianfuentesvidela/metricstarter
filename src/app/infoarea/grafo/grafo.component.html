@@ -1,0 +1,126 @@
+
+ <mat-drawer-container class="example-container" autosize style="min-height: 300px">
+  <mat-drawer #drawer class="example-sidenav" mode="side">
+    <p>Unidades</p>
+    <p *ngFor="let u of units">
+        <button type="button" mat-button (click)="selUnit(u._id, u.name); drawer.toggle()">
+            {{u.name}}
+          </button>
+    </p>
+  </mat-drawer>
+
+  <div class="example-sidenav-content" [ngClass]="routeAnimationsElements">
+    <button type="button" mat-button (click)="drawer.toggle()">
+      &lt;-unidades
+    </button>
+
+  </div>
+
+
+<div class="container">
+<div class="row align-items-start">
+<div class="col-md-12 col-lg-12">
+    <mat-card *ngIf="currentUnit" [ngClass]="routeAnimationsElements">
+       <mat-card-subtitle>
+         <h3>
+          <b>{{titulo}} =&gt;
+          {{currentUnitName}} -&gt;{{currentLevel}} {{curAho}}/{{curMes}}<span *ngIf="currentLevel=='dia'">/{{curDia}}</span>
+        </b>
+      </h3>
+      <div style="float: right">    <form>
+            <mat-form-field>
+             <mat-label>Mes de Trabajo</mat-label>
+             <mat-select [(value)]="currPeriod" >
+               <mat-option *ngFor="let creature of mesesUi" [value]="creature.YEARMONTH"
+               (click)="prendemetric('mes',[currentUnit, creature.YEAR, creature.MONTH, 0])">
+                 {{ creature.YEARMONTH }} <sup>({{ creature.TICS }})</sup>
+               </mat-option>
+             </mat-select>
+           </mat-form-field>
+
+         </form>
+         </div>
+         <div style="float: left;">
+            <button mat-raised-button [ngClass]="routeAnimationsElements"
+              color="secondary" (click)="exportToExcel()">
+              <mat-icon fontSet="fas" fontIcon="fa-file-excel"></mat-icon>
+              Mostrar-&gt;{{currentUnitName}}</button>
+        </div>
+      </mat-card-subtitle>
+      <mat-card-actions *ngIf="metricstat">
+        <div style="display: block">
+            <table  class="mat-table"  cellspacing="4" width="100%" >
+                <tr>
+                    <th class="mat-header-cell">Id</th>
+                    <th class="mat-header-cell">name</th>
+                    <th class="mat-header-cell">Fecha</th>
+                    <th *ngIf="currentLevel == 'dia'" class="mat-header-cell">Hora</th>
+                    <th class="mat-header-cell">TICS</th>
+                    <th class="mat-header-cell">MAXT0</th>
+                    <th class="mat-header-cell">MINT0</th>
+                    <th class="mat-header-cell">AVGT0</th>
+                    <th class="mat-header-cell">MAXH0</th>
+                    <th class="mat-header-cell">MINH0</th>
+                    <th class="mat-header-cell">AVGH0</th>
+                </tr>
+                <tr *ngFor="let m of metricstat | paginate: { itemsPerPage: 5, currentPage: p }">
+                    <td class="mat-cell">{{m.unitId}}</td>
+                    <td class="mat-cell">{{m.name}}</td>
+                    <td class="mat-cell">
+                        <a href="javascript:;" style="font-weight: bold;"
+                          *ngIf="m.NIVEL=='mes'" (click)="prendemetric('dia', [currentUnit, m.AGNO, m.MES, m.DIA] )">{{m.FECHA}}</a>
+                        <a *ngIf="m.NIVEL=='dia'">{{m.FECHA}}</a>
+                        </td>
+                    <td *ngIf="currentLevel == 'dia'" class="mat-cell">{{m.HORA}}</td>
+                    <td class="mat-cell">{{m.TICSW}}</td>
+                    <td [style.color]="m.MAXT0 > cota20 ? 'red' : 'blue'" class="mat-cell">{{m.MAXT0}}</td>
+                    <td class="mat-cell">{{m.MINT0}}</td>
+                    <td class="mat-cell">{{m.AVGT0}}</td>
+                    <td [style.color]="m.MAXH0 > cota100 ? 'red' : null" class="mat-cell">{{m.MAXH0}}</td>
+                    <td class="mat-cell">{{m.MINH0}}</td>
+                    <td class="mat-cell">{{m.AVGH0}}</td>
+                  </tr>
+                </table>
+
+                <pagination-controls (pageChange)="p = $event"></pagination-controls>
+              </div>
+          </mat-card-actions>
+
+    </mat-card>
+  </div>
+  <div class="col-xd-12 col-sd-12 col-md-6 col-lg-6">
+      <mat-card *ngIf="currentUnit">
+          <mat-card-actions>
+              <div class="column" *ngIf="metricstat">
+                      <div style="display:  inline-block; width: 100%; height: 50px;">
+Temperatura
+                          <div echarts [ngClass]="routeAnimationsElements"
+                          [options]="AnimationBarOption"
+                          [loading]="showloading"
+                          theme="dark"
+                          ></div>
+                      </div>
+                </div>
+            </mat-card-actions>
+        </mat-card>
+      </div>
+      <div class="col-xd-12 col-sd-12 col-md-6 col-lg-6">
+          <mat-card  *ngIf="currentUnit">
+              <mat-card-actions>
+                  <div class="column" *ngIf="metricstat">
+                          <div style="display:  inline-block; width: 100%; height: 50px;">
+Humedad
+                              <div echarts
+                              [options]="AnimationBarOption2"
+                              [loading]="showloading"
+                              theme="dark"
+                              ></div>
+                          </div>
+                    </div>
+                </mat-card-actions>
+            </mat-card>
+
+          </div>
+      </div>
+</div>
+</mat-drawer-container>

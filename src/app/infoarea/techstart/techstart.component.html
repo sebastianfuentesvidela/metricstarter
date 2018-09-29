@@ -1,0 +1,83 @@
+<mat-drawer-container class="example-container" autosize style="min-height: 300px">
+    <mat-drawer #drawer class="example-sidenav" mode="side">
+      <p>Unidades</p>
+      <p *ngFor="let u of units">
+          <button type="button" mat-button (click)="selUnit(u._id, u.name); drawer.toggle()">
+              {{u.name}}
+            </button>
+      </p>
+    </mat-drawer>
+
+    <div class="example-sidenav-content">
+      <button type="button" mat-button (click)="drawer.toggle()">
+        &lt;-destinos
+      </button>
+
+    </div>
+
+
+
+<div *ngIf="identity"
+class="container">
+  <div class="row align-items-start">
+    <div class="col-md-6 col-lg-6" [ngClass]="routeAnimationsElements">
+      <mat-card>
+        <mat-card-title><b>{{titulo}}</b> para {{currentUnitName}}</mat-card-title>
+        <mat-card-subtitle>
+            <button mat-raised-button  [ngClass]="routeAnimationsElements"
+            color="secondary" *ngIf="identity.role == 'ROLE_ADMIN'" class="mat-button"
+            class="btn btn-default glyphicon glyphicon-{{timer2button}}"
+             (click)="subscribeTimer2()" >
+              Generar Data</button><code><i *ngIf="timer2Id" class="fa fa-spinner fa-spin fa-2x fa-fw"></i> -&gt;{{counter2}}</code>
+          <button mat-raised-button [ngClass]="routeAnimationsElements"
+            (click)="subscribeTimer1()"
+              color="secondary">
+              <i class="fa fa-camera-retro fa-lg"></i>
+
+              Mostrar-&gt;{{counter1}}</button>
+
+        </mat-card-subtitle>
+        <mat-card-actions *ngIf="metrics">
+            <div>
+              <table  class="mat-table"  cellspacing="4" width="100%" >
+                <tr>
+                    <th class="mat-header-cell">Fecha</th>
+                    <th class="mat-header-cell">Unidad</th>
+                  <th class="mat-header-cell">T(0)</th>
+                  <th class="mat-header-cell">H(0)</th>
+                </tr>
+                <tr *ngFor="let metric of metrics | paginate: { itemsPerPage: 12, currentPage: p }">
+                        <td class="mat-cell">{{metric.metricDate}}</td>
+                        <td class="mat-cell">{{metric.name}}</td>
+                      <td class="mat-cell">{{metric.metricT0}}</td>
+                      <td class="mat-cell">{{metric.metricH0}}</td>
+                    </tr>
+                  </table>
+
+                  <pagination-controls (pageChange)="p = $event"></pagination-controls>
+
+            </div>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+    <div class="col-md-6 col-lg-6" [ngClass]="routeAnimationsElements">
+      <mat-card>
+        <mat-card-title>Gráfica Material</mat-card-title>
+        <mat-card-subtitle>
+          {{ 'anms.features.themes.title' | translate }}
+        </mat-card-subtitle>
+        <mat-card-actions>
+
+            <div echarts
+            [options]="AnimationBarOption"
+            [loading]="showloading"
+            theme="clear"
+            ></div>
+
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+</div>
+</mat-drawer-container>
+
